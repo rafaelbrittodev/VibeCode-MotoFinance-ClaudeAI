@@ -355,24 +355,21 @@
   </div>
 
   <div style="margin-top:14px;background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:18px">
-    <div class="c-label" style="margin-bottom:12px">🗓️ Linha do tempo de custos na compra</div>
-    <div style="display:flex;flex-direction:column;gap:0">
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #1a1a24;align-items:center">
-        <div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">1</div>
-        <div style="flex:1"><strong style="font-size:13px">Dia da assinatura</strong><br><span style="color:var(--muted);font-size:12px">Entrada do financiamento + Docs + Emplacamento + IPVA</span></div>
-        <div style="font-size:15px;font-weight:700;color:var(--gold)" id="docs-dia1"></div>
-      </div>
-      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #1a1a24;align-items:center">
-        <div style="width:28px;height:28px;border-radius:50%;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">2</div>
-        <div style="flex:1"><strong style="font-size:13px">Até ~500 km (≈ 1º mês)</strong><br><span style="color:var(--muted);font-size:12px">1ª revisão obrigatória</span></div>
-        <div style="font-size:15px;font-weight:700;color:var(--green)">R$ 444,29</div>
-      </div>
-      <div style="display:flex;gap:12px;padding:12px 0;align-items:center">
-        <div style="width:28px;height:28px;border-radius:50%;background:rgba(96,165,250,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">3</div>
-        <div style="flex:1"><strong style="font-size:13px">Parcelas mensais</strong><br><span style="color:var(--muted);font-size:12px">Começam 30 dias após a assinatura</span></div>
-        <div style="font-size:13px;font-weight:600;color:var(--blue)">conforme prazo</div>
-      </div>
+    <div class="c-label" style="margin-bottom:8px">🗓️ Linha do tempo de custos na compra</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <select id="tl-entrada" onchange="rTimeline()" style="background:var(--dark4);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;font-family:inherit;cursor:pointer;">
+        <option value="20">Entrada 20% — R$ 5.098</option>
+        <option value="30">Entrada 30% — R$ 7.647</option>
+        <option value="40" selected>Entrada 40% — R$ 10.196 ⭐</option>
+        <option value="50">Entrada 50% — R$ 12.745</option>
+      </select>
+      <select id="tl-prazo" onchange="rTimeline()" style="background:var(--dark4);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;font-family:inherit;cursor:pointer;">
+        <option value="12">Prazo 12x</option>
+        <option value="24" selected>Prazo 24x</option>
+        <option value="36">Prazo 36x</option>
+      </select>
     </div>
+    <div id="tl-content"></div>
   </div>
 </div>
 </div>
@@ -656,7 +653,7 @@
       html += `<div style="text-align:center;padding:10px 4px;border-radius:8px;background:${rev?'rgba(201,168,76,0.12)':'var(--dark4)'};border:1px solid ${rev?'rgba(201,168,76,0.3)':'transparent'}">
         <div style="font-size:9px;color:var(--muted)">Mês</div>
         <div style="font-size:14px;font-weight:700;color:${rev?'var(--gold)':'#555'}">${i}</div>
-        ${rev ? `<div style="font-size:9px;color:var(--gold);margin-top:2px">${rev.km>=1000?rev.km/1000+'k':rev.km}km</div>` : '<div style="font-size:9px;color:transparent">—</div>'}
+        ${rev ? `<div style="font-size:9px;color:var(--gold);margin-top:2px">${rev.km.toLocaleString('pt-BR')} km</div>` : '<div style="font-size:9px;color:transparent">—</div>'}
       </div>`;
     }
     html += `</div></div>`;
@@ -725,7 +722,27 @@
     if(el) el.textContent = f(rs.e/100*P + DOCS);
   }
 
-  // ───── NAVEGAÇÃO ─────
+  // ───── TIMELINE DOCS ─────
+  function rTimeline() {
+    const pct = parseInt(document.getElementById('tl-entrada').value);
+    const prazo = parseInt(document.getElementById('tl-prazo').value);
+    const ent = P * pct / 100;
+    const fin = P - ent;
+    const m = pmt(fin, T, prazo);
+    const dia1 = ent + DOCS;
+
+    const row = (num, bg, titulo, desc, val, cor) => `
+      <div style="display:flex;gap:12px;padding:12px 0;${num<3?'border-bottom:1px solid #1a1a24;':''}align-items:center">
+        <div style="width:28px;height:28px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">${num}</div>
+        <div style="flex:1"><strong style="font-size:13px">${titulo}</strong><br><span style="color:var(--muted);font-size:12px">${desc}</span></div>
+        <div style="font-size:15px;font-weight:700;color:${cor};text-align:right">${val}</div>
+      </div>`;
+
+    document.getElementById('tl-content').innerHTML =
+      row(1,'rgba(201,168,76,0.15)','Dia da assinatura',`Entrada (${pct}%) + Docs + Emplacamento + IPVA`,f(dia1),'var(--gold)') +
+      row(2,'rgba(34,197,94,0.12)','Até ~500 km (≈ 1º mês)','1ª revisão obrigatória','R$ 444,29','var(--green)') +
+      row(3,'rgba(96,165,250,0.12)',`Parcelas mensais (${prazo}x)`,`${f(m)}/mês · começa 30 dias após assinatura`,f(m)+'/mês','var(--blue)');
+  }
   function go(id, btn) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('p-'+id).classList.add('active');
@@ -735,8 +752,7 @@
   }
 
   // ───── INIT ─────
-  rFin(); rBar(); rAmort(); rManut(); rResumo();
-  document.getElementById('docs-dia1').textContent = f(0.4*P + DOCS);
+  rFin(); rBar(); rAmort(); rManut(); rResumo(); rTimeline();
 </script>
 </body>
 </html>

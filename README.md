@@ -112,7 +112,7 @@ Todo este projeto foi criado através de **conversa natural** com o Claude (Anth
 4. **Refinamento de UX** — ajustes visuais e de usabilidade também via descrição ("deixa a taxa de juros editável direto no cabeçalho")
 
 ### O que o vibe coding demonstra aqui:
-- É possível construir ferramentas financeiras funcionais e matematicamente corretas sem saber programar
+- É possível construir ferramentas financeiras funcionais e matematicamente corretas sem a necessidade de programar a fundo
 - A qualidade do resultado depende da **clareza das perguntas e da capacidade de revisar criticamente** as respostas
 - O processo é iterativo — bugs e imprecisões são encontrados e corrigidos em conversa
 - Conhecimento do domínio (neste caso, finanças pessoais) é mais importante do que conhecimento técnico

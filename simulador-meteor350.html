@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Simulador · Royal Enfield Meteor 350 · Stellar Black 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold:#c9a84c;--gold-light:#e8c96e;--dark:#0d0d10;--dark2:#13131a;
+    --dark3:#1a1a24;--dark4:#22222f;--border:#2a2a3a;--text:#f0ede8;
+    --muted:#888899;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--blue:#60a5fa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:100;background:rgba(13,13,16,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+  .nav-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;padding:0 8px;}
+  .nav-inner::-webkit-scrollbar{display:none;}
+  .nav-btn{flex-shrink:0;padding:14px 10px;font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+  .nav-btn:hover{color:var(--text);}
+  .nav-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#0d0d10 0%,#17130b 50%,#0d0d10 100%);padding:48px 16px 36px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.08) 0%,transparent 60%);pointer-events:none;}
+  .hero-eye{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+  .hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,7vw,52px);color:#fff;line-height:1.1;margin-bottom:8px;}
+  .hero p{color:var(--muted);font-size:clamp(11px,3vw,13px);letter-spacing:1px;}
+  .hero-price{display:inline-block;margin-top:18px;background:var(--dark3);border:1px solid rgba(201,168,76,0.4);border-radius:50px;padding:9px 22px;font-size:clamp(18px,5vw,22px);font-weight:600;color:var(--gold);}
+  .hero-tags{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;padding:0 8px;}
+  .hero-tag{background:var(--dark4);border:1px solid var(--border);border-radius:50px;padding:5px 12px;font-size:11px;color:var(--muted);}
+
+  /* SECTIONS */
+  .section{max-width:960px;margin:0 auto;padding:32px 14px;}
+  .sec-title{font-family:'Playfair Display',serif;font-size:clamp(20px,5vw,24px);color:#fff;margin-bottom:4px;}
+  .sec-sub{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.6;}
+  .page{display:none;}.page.active{display:block;}
+
+  /* HIGHLIGHT BOX */
+  .highlight{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03));border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:14px 16px;margin-bottom:20px;}
+  .highlight h3{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:6px;}
+  .highlight p{font-size:12px;color:var(--muted);line-height:1.8;}
+
+  /* TABS */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .tab{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;border:2px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+  .tab:hover{color:var(--text);border-color:#3a3a50;}
+  .tab.active.g{border-color:var(--green);background:rgba(34,197,94,0.1);color:var(--green);}
+  .tab.active.a{border-color:var(--amber);background:rgba(245,158,11,0.1);color:var(--amber);}
+  .tab.active.r{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red);}
+
+  /* TOGGLE */
+  .toggle-group{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .tgl{padding:7px 14px;border-radius:50px;font-size:12px;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+  .tgl:hover{color:var(--text);border-color:#3a3a50;}
+  .tgl.active{background:var(--dark4);color:var(--text);border-color:#404055;}
+  .tgl-label{font-size:12px;color:var(--muted);display:block;margin-bottom:8px;margin-top:14px;letter-spacing:0.5px;}
+
+  /* TABLE — scrollável horizontalmente no mobile */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;border:1px solid var(--border);}
+  .table-wrap::after{content:'← deslize para ver mais →';display:none;font-size:10px;color:var(--muted);text-align:center;padding:6px;letter-spacing:1px;}
+  table{width:100%;border-collapse:collapse;min-width:540px;}
+  th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:11px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+  td{padding:12px 12px;border-bottom:1px solid #1a1a24;vertical-align:middle;}
+  tr:last-child td{border:none;}
+  tr:hover td{background:rgba(255,255,255,0.02);}
+  tr.best td{background:rgba(201,168,76,0.04);}
+  .bar-wrap{width:60px;height:5px;background:var(--dark4);border-radius:3px;overflow:hidden;margin-top:4px;}
+  .bar-fill{height:100%;border-radius:3px;}
+
+  /* CARDS */
+  .card{background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:18px;}
+  .card.gold-border{border-color:var(--gold);background:#1a1710;}
+  .card.green-border{border-color:rgba(34,197,94,0.35);background:rgba(34,197,94,0.03);}
+  .c-label{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+  .c-val{font-size:18px;font-weight:700;color:#fff;}
+  .c-sub{font-size:11px;color:#555;margin-top:3px;}
+
+  /* GRID */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:600px){.grid2{grid-template-columns:1fr;}}
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
+  .info-box{background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+
+  /* AMORT */
+  .amort-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #1e1e28;gap:8px;}
+  .amort-row:last-child{border:none;}
+  .akey{font-size:12px;color:var(--muted);flex:1;}
+  .aval{font-size:13px;font-weight:600;text-align:right;flex-shrink:0;}
+
+  /* MANUT */
+  .manut-item{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border);}
+  .manut-item:last-child{border:none;}
+  .mdot{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+
+  /* PILLS */
+  .pill{display:inline-block;padding:2px 8px;border-radius:50px;font-size:10px;font-weight:600;}
+  .pill.g{background:rgba(34,197,94,0.15);color:var(--green);}
+  .pill.a{background:rgba(245,158,11,0.15);color:var(--amber);}
+  .pill.r{background:rgba(239,68,68,0.15);color:var(--red);}
+
+  /* TYPOGRAPHY */
+  .big{font-family:'Playfair Display',serif;font-size:clamp(26px,6vw,46px);font-weight:700;}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);padding:24px 16px;text-align:center;color:var(--muted);font-size:11px;line-height:1.9;margin-top:20px;}
+  footer strong{color:#666;}
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar{width:4px;height:4px;}
+  ::-webkit-scrollbar-track{background:var(--dark);}
+  ::-webkit-scrollbar-thumb{background:var(--dark4);border-radius:3px;}
+
+  /* ── MOBILE BREAKPOINTS ── */
+  @media(max-width:480px){
+    .hero{padding:36px 14px 28px;}
+    .hero-price{font-size:18px;padding:8px 18px;}
+    .hero-tags{gap:6px;}
+    .hero-tag{font-size:10px;padding:4px 10px;}
+    .section{padding:24px 12px;}
+    .sec-title{font-size:20px;}
+    .highlight{padding:12px 14px;}
+    .tab{padding:7px 12px;font-size:11px;}
+    .tgl{padding:7px 12px;font-size:11px;}
+    .card{padding:14px;}
+    .info-grid{grid-template-columns:1fr 1fr;}
+    .info-box{padding:13px;}
+    .table-wrap::after{display:block;}
+    /* Tabela mobile: colunas menos prioritárias ficam menores */
+    th,td{padding:10px 8px;font-size:11px;}
+    .big{font-size:clamp(24px,8vw,38px);}
+    /* Stats boxes em linha no mobile */
+    .stats-row{flex-direction:column!important;}
+  }
+
+  @media(max-width:360px){
+    .hero h1{font-size:26px;}
+    .nav-btn{padding:12px 8px;font-size:9px;}
+    .info-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ░░ HERO ░░ -->
+<div class="hero">
+  <div class="hero-eye">🏍️ Simulador de Compra Completo</div>
+  <h1>Royal Enfield<br>Meteor 350</h1>
+  <p>Stellar Black &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; Mogi das Cruzes – SP</p>
+  <div class="hero-price">R$ 25.490 à vista</div>
+  <div class="hero-tags">
+    <label class="hero-tag taxa-tag" title="Clique para editar a taxa de juros">
+      📝 Taxa:&nbsp;
+      <input
+        id="taxa-input"
+        type="number"
+        value="2.07"
+        min="0.1"
+        max="10"
+        step="0.01"
+        oninput="setTaxa(this.value)"
+        style="
+          width:52px;background:transparent;border:none;border-bottom:1px solid var(--gold);
+          color:var(--gold);font-size:13px;font-weight:600;font-family:inherit;
+          text-align:center;outline:none;padding:0 2px;
+        "
+      />
+      <span style="color:var(--gold);font-weight:600">% a.m.</span>
+    </label>
+    <span class="hero-tag">Sistema Price</span>
+    <span class="hero-tag">IPVA 2% SP</span>
+    <span class="hero-tag">Frete R$ 0 🎉</span>
+  </div>
+</div>
+
+<!-- ░░ NAVEGAÇÃO ░░ -->
+<nav>
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="go('fin',this)">💰 Financiamento</button>
+    <button class="nav-btn" onclick="go('amort',this)">📉 Amortização</button>
+    <button class="nav-btn" onclick="go('manut',this)">🔧 Manutenção</button>
+    <button class="nav-btn" onclick="go('docs',this)">📋 Docs &amp; Frete</button>
+    <button class="nav-btn" onclick="go('resumo',this)">🧮 Resumo Total</button>
+  </div>
+</nav>
+
+<!-- ░░░░░░░░░░░░░░░░░ FINANCIAMENTO ░░░░░░░░░░░░░░░░░ -->
+<div id="p-fin" class="page active">
+<div class="section">
+  <h2 class="sec-title">Simulação de Financiamento</h2>
+  <p class="sec-sub">Escolha o prazo e compare mensalidade, total pago e juros para cada cenário de entrada</p>
+
+  <div class="highlight">
+    <h3>💡 Como ler a tabela</h3>
+    <p>
+      <strong style="color:#fff">Mensalidade</strong> = quanto você paga todo mês ao banco.&nbsp;
+      <strong style="color:#fff">Total Pago</strong> = entrada + soma de todas as parcelas.&nbsp;
+      <strong style="color:#fff">Juros Totais</strong> = o que o banco cobra pelo crédito concedido.
+      Quanto maior a entrada, menor o valor financiado e menores os juros.
+    </p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active g" onclick="setP(12,this)">12 parcelas</button>
+    <button class="tab" onclick="setP(24,this)">24 parcelas</button>
+    <button class="tab" onclick="setP(36,this)">36 parcelas</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Entrada</th>
+          <th>Valor da Entrada</th>
+          <th>Valor Financiado</th>
+          <th>Mensalidade</th>
+          <th>Total Pago</th>
+          <th>Juros Totais</th>
+          <th>% de Juros</th>
+        </tr>
+      </thead>
+      <tbody id="ftbody"></tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:32px">
+    <h3 style="font-size:15px;color:#fff;margin-bottom:16px">📊 Comparativo visual de juros por cenário de entrada</h3>
+    <div id="bchart" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+</div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░░░ AMORTIZAÇÃO ░░░░░░░░░░░░░░░░░ -->
+<div id="p-amort" class="page">
+<div class="section">
+  <h2 class="sec-title">Simulação de Amortização</h2>
+  <p class="sec-sub">Quanto você economiza pagando 1 parcela à frente + 1 parcela antecipada do final</p>
+
+  <div class="highlight">
+    <h3>🎯 O que é amortizar antecipadamente?</h3>
+    <p>
+      Pagar <strong style="color:#fff">1 parcela adiantada no início</strong> e antecipar <strong style="color:#fff">1 parcela do final</strong> do contrato reduz diretamente o saldo devedor.
+      Isso elimina 2 meses de dívida, diminui os juros futuros e ainda pode reduzir o valor da mensalidade restante.
+      É uma das estratégias mais eficientes de economizar no financiamento.
+    </p>
+  </div>
+
+  <span class="tgl-label">Selecione o percentual de entrada:</span>
+  <div class="toggle-group" id="tgl-ae">
+    <button class="tgl active" onclick="setAE(20,this)">20% — R$ 5.098</button>
+    <button class="tgl" onclick="setAE(30,this)">30% — R$ 7.647</button>
+    <button class="tgl" onclick="setAE(40,this)">40% — R$ 10.196 ⭐</button>
+    <button class="tgl" onclick="setAE(50,this)">50% — R$ 12.745</button>
+  </div>
+
+  <span class="tgl-label">Selecione o prazo do financiamento:</span>
+  <div class="toggle-group" id="tgl-ap">
+    <button class="tgl active" onclick="setAP(12,this)">12x</button>
+    <button class="tgl" onclick="setAP(24,this)">24x</button>
+    <button class="tgl" onclick="setAP(36,this)">36x</button>
+  </div>
+
+  <div class="grid2" style="margin-top:4px">
+    <div class="card">
+      <h3 style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:16px">📊 Cenário sem amortização extra</h3>
+      <div id="asem"></div>
+    </div>
+    <div class="card green-border">
+      <h3 style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:16px">✅ Com 1 parcela à frente + 1 atrás</h3>
+      <div id="acom"></div>
+    </div>
+  </div>
+
+  <div id="aeco" style="margin-top:14px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.25);border-radius:14px;padding:22px;text-align:center"></div>
+</div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░░░ MANUTENÇÃO ░░░░░░░░░░░░░░░░░ -->
+<div id="p-manut" class="page">
+<div class="section">
+  <h2 class="sec-title">Manutenção no 1º Ano</h2>
+  <p class="sec-sub">Revisões obrigatórias Royal Enfield 350cc — necessárias para manter a garantia da fábrica</p>
+
+  <div class="highlight">
+    <h3>⚠️ Importante sobre a garantia</h3>
+    <p>A Royal Enfield exige que as revisões sejam feitas <strong style="color:#fff">nas concessionárias autorizadas</strong> nos intervalos corretos de km ou tempo. Pular uma revisão pode anular a garantia. Separe o valor no mês correspondente para não ser pego de surpresa.</p>
+  </div>
+
+  <span class="tgl-label">Selecione a média de quilometragem mensal:</span>
+  <div class="toggle-group" id="tgl-km">
+    <button class="tgl active" onclick="setKm(500,this)">🐢 500 km/mês (6.000 km/ano)</button>
+    <button class="tgl" onclick="setKm(1000,this)">🏇 1.000 km/mês (12.000 km/ano)</button>
+  </div>
+
+  <div id="mcontent"></div>
+</div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░░░ DOCS & FRETE ░░░░░░░░░░░░░░░░░ -->
+<div id="p-docs" class="page">
+<div class="section">
+  <h2 class="sec-title">Documentação, Emplacamento &amp; Frete</h2>
+  <p class="sec-sub">Custos únicos pagos no momento da compra · Mogi das Cruzes – SP</p>
+
+  <div class="info-grid">
+    <div class="info-box">
+      <div style="font-size:22px;margin-bottom:8px">📄</div>
+      <div class="c-label">1º Registro Detran-SP</div>
+      <div class="c-val">~R$ 180,00</div>
+      <div class="c-sub">Taxa de registro inicial do veículo</div>
+    </div>
+    <div class="info-box">
+      <div style="font-size:22px;margin-bottom:8px">🪪</div>
+      <div class="c-label">Licenciamento 2026</div>
+      <div class="c-val">R$ 174,08</div>
+      <div class="c-sub">Taxa anual obrigatória Detran-SP</div>
+    </div>
+    <div class="info-box">
+      <div style="font-size:22px;margin-bottom:8px">🔖</div>
+      <div class="c-label">Placa Mercosul</div>
+      <div class="c-val">~R$ 150,00</div>
+      <div class="c-sub">Estampagem da placa padrão Mercosul</div>
+    </div>
+    <div class="info-box" style="border-color:rgba(239,68,68,0.35)">
+      <div style="font-size:22px;margin-bottom:8px">💸</div>
+      <div class="c-label">IPVA 2026 — alíquota 2%</div>
+      <div class="c-val" style="color:var(--red)">R$ 509,80</div>
+      <div class="c-sub">2% sobre R$ 25.490 (SP · 350cc)</div>
+    </div>
+    <div class="info-box" style="border-color:rgba(34,197,94,0.35)">
+      <div style="font-size:22px;margin-bottom:8px">🚚</div>
+      <div class="c-label">Frete para Mogi das Cruzes</div>
+      <div class="c-val" style="color:var(--green)">R$ 0,00 🎉</div>
+      <div class="c-sub">Concessionária oficial na cidade — retirada local</div>
+    </div>
+    <div class="info-box gold-border" style="border-color:var(--gold);background:#1a1710">
+      <div style="font-size:22px;margin-bottom:8px">🧾</div>
+      <div class="c-label">Total Docs + Emplacamento</div>
+      <div class="c-val" style="color:var(--gold)">R$ 1.013,88</div>
+      <div class="c-sub">Pagar no dia da retirada da moto</div>
+    </div>
+  </div>
+
+  <div style="margin-top:24px" class="highlight">
+    <h3>📍 Royal Enfield — Mogi das Cruzes</h3>
+    <p>
+      <strong style="color:#fff">R. Carmela Dutra, 241 – Jardim Esplanada, Mogi das Cruzes – SP</strong><br>
+      ✅ Por ter concessionária oficial na cidade, o frete é <strong style="color:#fff">zero</strong> — você retira a moto pessoalmente, já emplacada e pronta para rodar.<br><br>
+      📅 Horário estimado: Seg–Sex 09h–19h · Sáb 09h–17h<br>
+      💡 Confirme disponibilidade do modelo e data de entrega diretamente na loja.
+    </p>
+  </div>
+
+  <div style="margin-top:14px;background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:18px">
+    <div class="c-label" style="margin-bottom:12px">🗓️ Linha do tempo de custos na compra</div>
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #1a1a24;align-items:center">
+        <div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">1</div>
+        <div style="flex:1"><strong style="font-size:13px">Dia da assinatura</strong><br><span style="color:var(--muted);font-size:12px">Entrada do financiamento + Docs + Emplacamento + IPVA</span></div>
+        <div style="font-size:15px;font-weight:700;color:var(--gold)" id="docs-dia1"></div>
+      </div>
+      <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #1a1a24;align-items:center">
+        <div style="width:28px;height:28px;border-radius:50%;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">2</div>
+        <div style="flex:1"><strong style="font-size:13px">Até ~500 km (≈ 1º mês)</strong><br><span style="color:var(--muted);font-size:12px">1ª revisão obrigatória</span></div>
+        <div style="font-size:15px;font-weight:700;color:var(--green)">R$ 444,29</div>
+      </div>
+      <div style="display:flex;gap:12px;padding:12px 0;align-items:center">
+        <div style="width:28px;height:28px;border-radius:50%;background:rgba(96,165,250,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">3</div>
+        <div style="flex:1"><strong style="font-size:13px">Parcelas mensais</strong><br><span style="color:var(--muted);font-size:12px">Começam 30 dias após a assinatura</span></div>
+        <div style="font-size:13px;font-weight:600;color:var(--blue)">conforme prazo</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░░░ RESUMO TOTAL ░░░░░░░░░░░░░░░░░ -->
+<div id="p-resumo" class="page">
+<div class="section">
+  <h2 class="sec-title">Resumo de Custo Total</h2>
+  <p class="sec-sub">Combine entrada, prazo e km rodados para ver o custo real completo da sua compra</p>
+
+  <span class="tgl-label">Percentual de entrada:</span>
+  <div class="toggle-group" id="tgl-re">
+    <button class="tgl" onclick="setR('e',20,this)">20%</button>
+    <button class="tgl" onclick="setR('e',30,this)">30%</button>
+    <button class="tgl active" onclick="setR('e',40,this)">40% ⭐</button>
+    <button class="tgl" onclick="setR('e',50,this)">50%</button>
+  </div>
+
+  <span class="tgl-label">Prazo do financiamento:</span>
+  <div class="toggle-group" id="tgl-rp">
+    <button class="tgl" onclick="setR('p',12,this)">12x</button>
+    <button class="tgl active" onclick="setR('p',24,this)">24x</button>
+    <button class="tgl" onclick="setR('p',36,this)">36x</button>
+  </div>
+
+  <span class="tgl-label">Quilometragem mensal:</span>
+  <div class="toggle-group" id="tgl-rk">
+    <button class="tgl active" onclick="setR('k',500,this)">500 km/mês</button>
+    <button class="tgl" onclick="setR('k',1000,this)">1.000 km/mês</button>
+  </div>
+
+  <div id="routput"></div>
+</div>
+</div>
+
+<footer>
+  <strong>⚠️ Simulação com fins exclusivamente informativos.</strong><br>
+  Taxas de juros, IPVA, custos de documentação e revisões são estimativas baseadas em dados de mercado 2026.<br>
+  Os valores reais podem variar. <strong>Confirme todas as condições diretamente com a concessionária Royal Enfield Mogi das Cruzes</strong> antes de fechar qualquer negócio.<br><br>
+  Desenvolvido com ❤️ para facilitar sua decisão de compra.
+</footer>
+
+<script>
+  const P = 25490;
+  let T = 0.0207;
+  const DOCS = 1013.88;
+
+  function setTaxa(val) {
+    const v = parseFloat(val);
+    if (!isNaN(v) && v >= 0.1 && v <= 10) {
+      T = v / 100;
+      rFin(); rBar(); rAmort(); rResumo();
+    }
+  }
+  const REVS = [
+    { km: 500,   itens: 'Óleo motor, filtro de óleo, ajuste de válvulas',                          preco: 444.29 },
+    { km: 5000,  itens: 'Óleo, filtro, vela, filtro de ar, limpeza corrente',                      preco: 444.29 },
+    { km: 10000, itens: 'Revisão completa: óleo, filtro, vela, corrente, verificação de pneus',    preco: 855.92 },
+  ];
+
+  const f = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const pmt = (pv, i, n) => pv <= 0 ? 0 : pv * (i * Math.pow(1+i,n)) / (Math.pow(1+i,n) - 1);
+
+  // ───── FINANCIAMENTO ─────
+  let fp = 12;
+
+  function setP(p, btn) {
+    fp = p;
+    document.querySelectorAll('#p-fin .tab').forEach(b => { b.classList.remove('active','g','a','r'); });
+    btn.classList.add('active', p===12?'g': p===24?'a':'r');
+    rFin(); rBar();
+  }
+
+  function rFin() {
+    const c = { 12:'var(--green)', 24:'var(--amber)', 36:'var(--red)' }[fp];
+    const rows = [20,30,40,50].map(pct => {
+      const ent = P*pct/100, fin = P-ent, m = pmt(fin, T, fp);
+      const tot = ent + m*fp, jur = m*fp - fin, pj = (jur/tot*100).toFixed(1);
+      const bc = pj > 30 ? 'var(--red)' : pj > 20 ? 'var(--amber)' : 'var(--green)';
+      return `<tr class="${pct===40?'best':''}">
+        <td>
+          <span style="font-size:20px;font-weight:700">${pct}%</span><br>
+          <small style="color:var(--muted)">${f(ent)}</small>
+          ${pct===40 ? '<br><span class="pill a">⭐ Recomendado</span>' : ''}
+        </td>
+        <td style="font-weight:600">${f(ent)}</td>
+        <td>${f(fin)}</td>
+        <td>
+          <span style="font-size:19px;font-weight:700;color:${c}">${f(m)}</span>
+          <small style="color:var(--muted)">/mês</small>
+        </td>
+        <td style="font-weight:600">${f(tot)}</td>
+        <td style="font-weight:700;color:var(--red)">${f(jur)}</td>
+        <td>
+          <div style="font-size:13px;font-weight:700;color:${bc}">${pj}%</div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${pj}%;background:${bc}"></div></div>
+        </td>
+      </tr>`;
+    });
+    document.getElementById('ftbody').innerHTML = rows.join('');
+  }
+
+  function rBar() {
+    const c = { 12:'var(--green)', 24:'var(--amber)', 36:'var(--red)' }[fp];
+    const maxJ = pmt(P*0.8, T, fp)*fp - P*0.8;
+    const html = [20,30,40,50].map(pct => {
+      const fin = P - P*pct/100, j = pmt(fin, T, fp)*fp - fin;
+      const w = Math.round(j/maxJ*100);
+      return `<div style="display:flex;align-items:center;gap:12px">
+        <div style="width:36px;font-size:12px;font-weight:600;color:var(--muted)">${pct}%</div>
+        <div style="flex:1;height:28px;background:var(--dark4);border-radius:6px;overflow:hidden;position:relative">
+          <div style="height:100%;width:${w}%;background:${c};border-radius:6px;display:flex;align-items:center;padding-left:12px;transition:width 0.4s ease">
+            <span style="font-size:12px;font-weight:700;color:#0d0d10;white-space:nowrap">${f(j)}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    document.getElementById('bchart').innerHTML = html;
+  }
+
+  // ───── AMORTIZAÇÃO ─────
+  let ae = 20, ap = 12;
+
+  function setAE(v, b) {
+    ae = v;
+    document.querySelectorAll('#tgl-ae .tgl').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); rAmort();
+  }
+  function setAP(v, b) {
+    ap = v;
+    document.querySelectorAll('#tgl-ap .tgl').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); rAmort();
+  }
+
+  function rAmort() {
+    const ent = P*ae/100, fin = P-ent, m = pmt(fin, T, ap);
+    const jsSem = m*ap - fin;
+    const totalSem = ent + m*ap;
+
+    /*
+      SIMULAÇÃO MÊS A MÊS — Tabela Price com amortização dupla:
+      Todo mês o cliente paga 2x a parcela original (valor fixo = 2*m):
+        - 1ª parte: paga a parcela normal do mês (juros + amortização regular)
+        - 2ª parte: o valor extra (= m) é aplicado integralmente como
+          amortização extraordinária no saldo devedor restante,
+          eliminando a última parcela do contrato.
+
+      Simulamos mês a mês:
+        1. Calcula juros do mês: saldo * T
+        2. Amortização normal: m - juros_mes
+        3. Amortização extra: m (integralmente no principal)
+        4. Novo saldo = saldo - amort_normal - amort_extra
+        5. Repete até saldo <= 0
+    */
+
+    let saldo = fin;
+    let mesesCom = 0;
+    let jurosAcumCom = 0;
+    let totalPagoCom = 0;
+
+    while (saldo > 0.01) {
+      const jurosMes = saldo * T;
+      const amortNormal = m - jurosMes;
+      // pagamento extra = m inteiro como amortização do principal
+      const amortExtra = m;
+      jurosAcumCom += jurosMes;
+      // neste mês paga 2*m (exceto se saldo for menor que isso)
+      const pagamentoMes = Math.min(2 * m, saldo + jurosMes);
+      totalPagoCom += pagamentoMes;
+      saldo = saldo - amortNormal - amortExtra;
+      mesesCom++;
+      if (mesesCom > ap) break; // segurança
+    }
+    // Se no último mês sobrou saldo residual mínimo, já está incluso no loop
+
+    const totalComEntrada = ent + totalPagoCom;
+    const eco = jsSem - jurosAcumCom;
+    const pagMensal = 2 * m;
+
+    const R = (k, v, c='#fff') => `<div class="amort-row"><span class="akey">${k}</span><span class="aval" style="color:${c}">${v}</span></div>`;
+
+    document.getElementById('asem').innerHTML =
+      R('Valor financiado', f(fin)) +
+      R('Pagamento mensal', f(m)+'/mês', 'var(--amber)') +
+      R('Prazo total', ap+' meses') +
+      R('Total de juros', f(jsSem), 'var(--red)') +
+      R('Total pago (entrada + parcelas)', f(totalSem));
+
+    document.getElementById('acom').innerHTML =
+      R('Pagamento mensal (2x a parcela)', f(pagMensal)+'/mês', 'var(--green)') +
+      R('Parcela normal do mês', f(m), 'var(--muted)') +
+      R('Amortização extra mensal', f(m), 'var(--green)') +
+      R('Novo prazo real', mesesCom+' meses', '#fff') +
+      R('Total de juros pagos', f(jurosAcumCom), 'var(--amber)') +
+      R('Total pago (entrada + pagamentos)', f(totalComEntrada));
+
+    document.getElementById('aeco').innerHTML = `
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:8px">💰 Economia total com amortização dupla</div>
+      <div class="big" style="color:var(--green)">${f(eco)}</div>
+      <div style="color:var(--muted);font-size:13px;margin-top:6px">
+        de juros economizados &nbsp;·&nbsp;
+        prazo reduzido de <strong style="color:#fff">${ap}x</strong> para <strong style="color:#fff">${mesesCom}x</strong>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+        <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px 18px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">PAGA POR MÊS</div>
+          <div style="font-size:18px;font-weight:700;color:#fff">${f(pagMensal)}</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px 18px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">MESES ECONOMIZADOS</div>
+          <div style="font-size:18px;font-weight:700;color:var(--green)">${ap - mesesCom} meses</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px 18px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px">JUROS ECONOMIZADOS</div>
+          <div style="font-size:18px;font-weight:700;color:var(--green)">${f(eco)}</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.3);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.7;text-align:left">
+        <strong style="color:#888">Como funciona todo mês:</strong> Você paga <strong style="color:#fff">${f(pagMensal)}</strong> → a parcela normal quita juros + amortização regular → o valor extra <strong style="color:#fff">${f(m)}</strong> vai inteiro para abater o saldo devedor → isso elimina a última parcela do contrato a cada mês.
+      </div>`;
+  }
+
+  // ───── MANUTENÇÃO ─────
+  let km = 500;
+
+  function setKm(v, b) {
+    km = v;
+    document.querySelectorAll('#tgl-km .tgl').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); rManut();
+  }
+
+  function rManut() {
+    const anoKm = km * 12;
+    const inc = REVS.filter(r => r.km <= anoKm);
+    const tot = inc.reduce((a,b) => a+b.preco, 0);
+
+    let html = '<div style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:0 18px;margin-bottom:16px">';
+    REVS.forEach(r => {
+      const ok = r.km <= anoKm;
+      const mes = Math.ceil(r.km / km);
+      html += `<div class="manut-item" style="opacity:${ok ? 1 : 0.32}">
+        <div class="mdot" style="background:${ok?'rgba(201,168,76,0.15)':'var(--dark4)'};color:${ok?'var(--gold)':'var(--muted)'}">
+          ${r.km >= 1000 ? (r.km/1000)+'k' : r.km}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:#fff">
+            Revisão ${r.km.toLocaleString('pt-BR')} km
+            ${ok ? `<span class="pill g" style="margin-left:6px">✓ inclusa</span>` : `<span class="pill a" style="margin-left:6px">fora do 1º ano</span>`}
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">${r.itens}</div>
+          <div style="font-size:10px;color:#555;margin-top:3px">${ok ? `Aproximadamente no mês ${mes} (~${r.km.toLocaleString('pt-BR')} km)` : `Não atingido rodando ${km} km/mês`}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;padding-left:12px">
+          <div style="font-size:16px;font-weight:700;color:${ok?'var(--gold)':'var(--muted)'}">${f(r.preco)}</div>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+
+    html += `<div style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center">
+      <div>
+        <div class="c-label">Total revisões no 1º ano</div>
+        <div style="font-size:24px;font-weight:700;color:var(--gold)">${f(tot)}</div>
+      </div>
+      <div>
+        <div class="c-label">Média mensal</div>
+        <div style="font-size:24px;font-weight:700;color:var(--amber)">${f(tot/12)}</div>
+      </div>
+      <div>
+        <div class="c-label">Km previstos no ano</div>
+        <div style="font-size:24px;font-weight:700">${anoKm.toLocaleString('pt-BR')} km</div>
+      </div>
+    </div>`;
+
+    // Calendário de gastos mensais — grid responsivo
+    html += `<div style="margin-top:16px;background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:16px">
+      <div class="c-label" style="margin-bottom:14px">📅 Calendário de revisões — mês a mês</div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px">`;
+    for(let i=1;i<=12;i++){
+      const rev = REVS.find(r => r.km <= anoKm && Math.ceil(r.km/km) === i);
+      html += `<div style="text-align:center;padding:10px 4px;border-radius:8px;background:${rev?'rgba(201,168,76,0.12)':'var(--dark4)'};border:1px solid ${rev?'rgba(201,168,76,0.3)':'transparent'}">
+        <div style="font-size:9px;color:var(--muted)">Mês</div>
+        <div style="font-size:14px;font-weight:700;color:${rev?'var(--gold)':'#555'}">${i}</div>
+        ${rev ? `<div style="font-size:9px;color:var(--gold);margin-top:2px">${rev.km>=1000?rev.km/1000+'k':rev.km}km</div>` : '<div style="font-size:9px;color:transparent">—</div>'}
+      </div>`;
+    }
+    html += `</div></div>`;
+
+    document.getElementById('mcontent').innerHTML = html;
+  }
+
+  // ───── RESUMO ─────
+  let rs = { e:40, p:24, k:500 };
+
+  function setR(key, val, btn) {
+    rs[key] = val;
+    const ids = { e:'tgl-re', p:'tgl-rp', k:'tgl-rk' };
+    document.querySelectorAll('#'+ids[key]+' .tgl').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); rResumo();
+  }
+
+  function rResumo() {
+    const ent = P*rs.e/100, fin = P-ent, m = pmt(fin, T, rs.p);
+    const totFin = m*rs.p, jur = totFin - fin;
+    const anoKm = rs.k*12;
+    const manut = REVS.filter(r => r.km <= anoKm).reduce((a,b)=>a+b.preco,0);
+    const tot1ano = ent + (m*12) + DOCS + manut;
+    const totGeral = ent + totFin + DOCS + manut;
+
+    const itens = [
+      ['💵', `Entrada (${rs.e}%)`,                       ent,   '#fff'],
+      ['🏦', `Financiamento (${rs.p}x de ${f(m)})`,      totFin,'var(--amber)'],
+      ['📈', 'Juros totais do financiamento',             jur,   'var(--red)'],
+      ['📋', 'Docs + Emplacamento + IPVA',               DOCS,  'var(--blue)'],
+      ['🚚', 'Frete (retirada em Mogi das Cruzes)',       0,     'var(--green)'],
+      ['🔧', `Manutenção 1º ano (${rs.k} km/mês)`,       manut, 'var(--gold)'],
+    ];
+
+    let html = `<div style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px">`;
+    itens.forEach(([ic, lb, vl, cl], i) => {
+      html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;${i?'border-top:1px solid #1a1a24':''}">
+        <span style="color:var(--muted);font-size:13px">${ic}&nbsp; ${lb}</span>
+        <span style="font-size:16px;font-weight:700;color:${cl}">${f(vl)}</span>
+      </div>`;
+    });
+    html += `</div>
+
+    <div class="grid2">
+      <div style="background:#16120a;border:2px solid var(--gold);border-radius:14px;padding:22px;text-align:center">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">💳 Desembolso no 1º Ano</div>
+        <div class="big" style="color:var(--gold)">${f(tot1ano)}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">entrada + 12 parcelas + docs + revisões</div>
+      </div>
+      <div style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:22px;text-align:center">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">📊 Custo Total do Contrato</div>
+        <div class="big">${f(totGeral)}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">ao longo de todos os ${rs.p} meses + extras</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;padding:16px 18px;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:12px;font-size:12px;color:var(--muted);line-height:1.9">
+      <strong style="color:var(--gold)">📌 Custo para sair com a moto no 1º dia:</strong><br>
+      Entrada ${f(ent)} + Docs ${f(DOCS)} = <strong style="color:#fff">${f(ent+DOCS)}</strong> para assinar e emplacar.<br>
+      Mais ${f(444.29)} da 1ª revisão no 1º mês = <strong style="color:#fff">${f(ent+DOCS+444.29)}</strong> no total dos primeiros 30 dias.
+    </div>`;
+
+    document.getElementById('routput').innerHTML = html;
+    // atualiza campo docs na timeline
+    const el = document.getElementById('docs-dia1');
+    if(el) el.textContent = f(rs.e/100*P + DOCS);
+  }
+
+  // ───── NAVEGAÇÃO ─────
+  function go(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('p-'+id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ───── INIT ─────
+  rFin(); rBar(); rAmort(); rManut(); rResumo();
+  document.getElementById('docs-dia1').textContent = f(0.4*P + DOCS);
+</script>
+</body>
+</html>
